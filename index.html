@@ -45,14 +45,51 @@
             font-size: 14px;
             color: #666;
         }
-        /* VLookup Style Selector Dashboard */
+        
+        /* Welcome Page Styles */
+        #sec-welcome {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .welcome-hero h1 {
+            color: #007bff;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .welcome-hero p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .enter-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+        }
+        .enter-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* VLookup Style Selector Dashboard (Hidden by default on Welcome Page) */
         .dashboard-selector {
+            display: none; 
             background: #e8f4fd;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 25px;
             text-align: center;
             border: 1px solid #bce8f1;
+        }
+        .dashboard-selector.active-dropdown {
+            display: block; /* Shown only inside Dashboard */
         }
         .dashboard-selector label {
             font-weight: bold;
@@ -72,7 +109,7 @@
             max-width: 100%;
         }
         .section-block {
-            display: none; /* Hidden by default for VLookup style */
+            display: none; /* Hidden by default */
             margin-bottom: 30px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -170,6 +207,19 @@
                 target.classList.add("active");
             }
         }
+
+        // Welcome Page থেকে ড্যাশবোর্ডে প্রবেশ করার ফাংশন
+        function enterDashboard() {
+            // ওয়েলকাম পেজ হাইড করা
+            document.getElementById("sec-welcome").classList.remove("active");
+            
+            // ড্যাশবোর্ডের ড্রপডাউন মেনু দৃশ্যমান করা
+            document.getElementById("dashboardSelectorWrapper").classList.add("active-dropdown");
+            
+            // ডিফল্টভাবে প্রথম মেম্বার (Abdul Awal) ওপেন করা
+            document.getElementById("sec-awal").classList.add("active");
+            document.getElementById("statementSelector").value = "sec-awal";
+        }
     </script>
 </head>
 <body>
@@ -178,29 +228,39 @@
     <header>
         <h2>বন্ধুত্বের স্মারক সমিতি</h2>
         <h4>স্থাপিত: ২০২৬</h4>
-        <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
+        <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
     </header>
 
-    <!-- VLookup Style Selector Dashboard Menu -->
-    <div class="dashboard-selector">
-        <label for="statementSelector">Please Select Your Page:</label>
+    <!-- ১. Welcome Page Section (Front Page Without Dropdown) -->
+    <div id="sec-welcome" class="section-block active">
+        <div class="welcome-hero">
+            <h1>বন্ধুত্বের স্মারক সমিতিতে</h1>
+            <h1>আপনাকে স্বাগতম</h1>
+            <p>আমাদের এই প্ল্যাটফর্মে সকল আর্থিক বিবরণী খুব সহজে দেখতে পারবেন। একসাথে পথচলার স্মারক হিসেবে বাল্যকালের বন্ধুদের নিয়ে গঠিত আমাদের এই সমিতি।</p>
+            <button class="enter-btn" onclick="enterDashboard()">Dashboard</button>
+        </div>
+    </div>
+
+    <!-- ২. VLookup Style Selector Dashboard (Appears inside Dashboard) -->
+    <div id="dashboardSelectorWrapper" class="dashboard-selector">
+        <label for="statementSelector">দয়া করে আপনাকে খুঁজুন:</label>
         <select id="statementSelector" onchange="showStatement()">
-            <option value="sec-awal">Abdul Awal</option>
-            <option value="sec-arif">Arif Hossain</option>
-            <option value="sec-babor">Babor Patwary</option>
-            <option value="sec-babul">Babul Hossain</option>
-            <option value="sec-jasim">Jasim Uddin</option>
-            <option value="sec-main">Main Uddin</option>
-            <option value="sec-saiem">Md. Saiem</option>
-            <option value="sec-selim">Selim Patwary</option>
-            <option value="sec-sanawer">Sanawer Quder</option>
-            <option value="sec-inventory">Friends Investments Inventory</option>
-            <option value="sec-payment">Payment Statement (Umme Sarmin)</option>
+            <option value="sec-awal">আবদুল আউয়াল</option>
+            <option value="sec-arif">আরিফ হোসেন</option>
+            <option value="sec-babor">বাবর পাটোয়ারী</option>
+            <option value="sec-babul">বাবুল হোসেন</option>
+            <option value="sec-jasim">জসিম উদ্দিন</option>
+            <option value="sec-main">মঈন উদ্দিন (সুমন)</option>
+            <option value="sec-saiem">মোঃ সায়েম (শাকিল)</option>
+            <option value="sec-selim">সেলিম পাটোয়ারী</option>
+            <option value="sec-sanawer">সানোয়ার কাদের (আরিফ)</option>
+            <option value="sec-inventory">মাসিক লেনদেন এর বিবরণ</option>
+            <option value="sec-payment">ক্রয়কৃত সম্পত্তি পরিশোধিত বিবরণ</option>
         </select>
     </div>
 
-    <!-- ১. Abdul Awal Statement -->
-    <div id="sec-awal" class="section-block active">
+    <!-- Abdul Awal Statement -->
+    <div id="sec-awal" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Abdul Awal</p>
             <p><strong>Statement Month:</strong> September 2026</p>
@@ -247,7 +307,7 @@
         </div>
     </div>
 
-    <!-- ২. Arif Hossain Statement -->
+    <!-- Arif Hossain Statement -->
     <div id="sec-arif" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Arif Hossain</p>
@@ -291,7 +351,7 @@
         </div>
     </div>
 
-    <!-- ৩. Babor Patwary Statement -->
+    <!-- Babor Patwary Statement -->
     <div id="sec-babor" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Babor Patwary</p>
@@ -342,7 +402,7 @@
         </div>
     </div>
 
-    <!-- ৪. Babul Hossain Statement -->
+    <!-- Babul Hossain Statement -->
     <div id="sec-babul" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Babul Hossain</p>
@@ -387,7 +447,7 @@
         </div>
     </div>
 
-    <!-- ৫. Jasim Uddin Statement -->
+    <!-- Jasim Uddin Statement -->
     <div id="sec-jasim" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Jasim Uddin</p>
@@ -433,7 +493,7 @@
         </div>
     </div>
 
-    <!-- ৬. Main Uddin Statement -->
+    <!-- Main Uddin Statement -->
     <div id="sec-main" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Main Uddin</p>
@@ -480,7 +540,7 @@
         </div>
     </div>
 
-    <!-- ৭. Md. Saiem Statement -->
+    <!-- Md. Saiem Statement -->
     <div id="sec-saiem" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Md. Saiem</p>
@@ -523,7 +583,7 @@
         </div>
     </div>
 
-    <!-- ৮. Selim Patwary Statement -->
+    <!-- Selim Patwary Statement -->
     <div id="sec-selim" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Selim Patwary</p>
@@ -562,7 +622,7 @@
         </div>
     </div>
 
-    <!-- ৯. Sanawer Quder Statement -->
+    <!-- Sanawer Quder Statement -->
     <div id="sec-sanawer" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Sanawer Quder</p>
@@ -617,7 +677,7 @@
         </div>
     </div>
 
-    <!-- ১০. Friends Investments Inventory -->
+    <!-- Friends Investments Inventory -->
     <div id="sec-inventory" class="section-block">
         <h3 class="section-title">Friends Investments Inventory</h3>
         
@@ -718,7 +778,7 @@
         </div>
     </div>
 
-    <!-- ১১. Payment Statement (Umme Sarmin Akter) -->
+    <!-- Payment Statement (Umme Sarmin Akter) -->
     <div id="sec-payment" class="section-block">
         <div class="info-box">
             <p><strong>Account Name:</strong> Umme Sarmin Akter</p>
