@@ -78,7 +78,7 @@
             background-color: #0056b3;
         }
 
-        /* VLookup Style Selector Dashboard (Hidden by default on Welcome Page) */
+        /* VLookup Style Selector Dashboard */
         .dashboard-selector {
             display: none; 
             background: #e8f4fd;
@@ -89,7 +89,7 @@
             border: 1px solid #bce8f1;
         }
         .dashboard-selector.active-dropdown {
-            display: block; /* Shown only inside Dashboard */
+            display: block;
         }
         .dashboard-selector label {
             font-weight: bold;
@@ -108,8 +108,29 @@
             width: 250px;
             max-width: 100%;
         }
+        
+        /* Print Button Style */
+        .print-btn-container {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .print-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .print-btn:hover {
+            background-color: #218838;
+        }
+
         .section-block {
-            display: none; /* Hidden by default */
+            display: none;
             margin-bottom: 30px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -117,7 +138,7 @@
             border-radius: 8px;
         }
         .section-block.active {
-            display: block; /* Show active section */
+            display: block;
         }
         .info-box {
             background: #f8f9fa;
@@ -194,6 +215,28 @@
         footer a:hover {
             text-decoration: underline;
         }
+
+        /* Print Media Settings: প্রিন্ট করার সময় যা যা লুকানো থাকবে */
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            #dashboardSelectorWrapper,
+            .print-btn-container,
+            footer {
+                display: none !important;
+            }
+            .section-block {
+                border: none;
+                padding: 0;
+            }
+        }
     </style>
     <script>
         function showStatement() {
@@ -208,18 +251,22 @@
             }
         }
 
-        // Welcome Page থেকে ড্যাশবোর্ডে প্রবেশ করার ফাংশন
         function enterDashboard() {
-            // ওয়েলকাম পেজ হাইড করা
             document.getElementById("sec-welcome").classList.remove("active");
-            
-            // ড্যাশবোর্ডের ড্রপডাউন মেনু দৃশ্যমান করা
             document.getElementById("dashboardSelectorWrapper").classList.add("active-dropdown");
-            
-            // ডিফল্টভাবে প্রথম মেম্বার (Abdul Awal) ওপেন করা
             document.getElementById("sec-awal").classList.add("active");
             document.getElementById("statementSelector").value = "sec-awal";
         }
+
+        // প্রিন্ট ফাংশন সুনিশ্চিত করা হলো
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const printBtn = document.querySelector('.print-btn');
+            if (printBtn) {
+                printBtn.addEventListener('click', function() {
+                    window.print();
+                });
+            }
+        });
     </script>
 </head>
 <body>
@@ -232,21 +279,21 @@
         <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
     </header>
 
-    <!-- ১. Welcome Page Section (Front Page Without Dropdown) -->
+    <!-- ১. Welcome Page Section -->
     <div id="sec-welcome" class="section-block active">
         <div class="welcome-hero">
             <h1>প্রিয় বন্ধুরা,</h1>
             <h1>السلام عليكم ورحمة الله</h1>
             <h1>বন্ধুত্বের স্মারক সমিতিতে</h1>
             <h1>আপনাকে স্বাগতম</h1>
-            <p>আমাদের এই প্ল্যাটফর্মে সমিতির সকল আর্থিক বিবরণী খুব সহজে দেখতে পারবেন। একসাথে পথচলার স্মারক হিসেবে বাল্যকালের বন্ধুদের নিয়ে গঠিত আমাদের এই সমিতি।</p>
+            <p>আমাদের এই প্ল্যাটফর্মে সকল আর্থিক বিবরণী খুব সহজে দেখতে পারবেন। একসাথে পথচলার স্মারক হিসেবে বাল্যকালের বন্ধুদের নিয়ে গঠিত আমাদের এই সমিতি।</p>
             <button class="enter-btn" onclick="enterDashboard()">Dashboard</button>
         </div>
     </div>
 
-    <!-- ২. VLookup Style Selector Dashboard (Appears inside Dashboard) -->
+    <!-- ২. VLookup Style Selector Dashboard -->
     <div id="dashboardSelectorWrapper" class="dashboard-selector">
-        <label for="statementSelector">আপনার হিসেবের বিবরন খুঁজুন:</label>
+        <label for="statementSelector">হিসেবের বিবরন খুঁজুন:</label>
         <select id="statementSelector" onchange="showStatement()">
             <option value="sec-awal">আবদুল আউয়াল</option>
             <option value="sec-arif">আরিফ হোসেন</option>
@@ -260,6 +307,11 @@
             <option value="sec-inventory">মাসিক লেনদেন এর বিবরণ</option>
             <option value="sec-payment">ক্রয়কৃত সম্পত্তি পরিশোধিত বিবরণ</option>
         </select>
+    </div>
+
+    <!-- প্রিন্ট বাটন -->
+    <div class="print-btn-container">
+        <button class="print-btn">🖨️ প্রিন্ট করুন</button>
     </div>
 
     <!-- Abdul Awal Statement -->
