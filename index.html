@@ -62,10 +62,44 @@
             line-height: 1.6;
             margin-bottom: 30px;
         }
-        .enter-btn {
+        
+        /* Passcode Box Style */
+        .passcode-box {
+            background: #e8f4fd;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 450px;
+            border: 1px solid #bce8f1;
+            text-align: left;
+        }
+        .passcode-box .form-group {
+            margin-bottom: 15px;
+        }
+        .passcode-box label {
+            display: block;
+            font-weight: bold;
+            color: #007bff;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .passcode-box input, .passcode-box select {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            background: #fff;
+        }
+        .login-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .unlock-btn {
             background-color: #007bff;
             color: white;
-            padding: 12px 30px;
+            padding: 10px 30px;
             font-size: 16px;
             font-weight: bold;
             border: none;
@@ -73,12 +107,21 @@
             cursor: pointer;
             transition: background 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+            width: 100%;
         }
-        .enter-btn:hover {
+        .unlock-btn:hover {
             background-color: #0056b3;
         }
+        .error-msg {
+            color: #d9534f;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
 
-        /* VLookup Style Selector Dashboard */
+        /* Dashboard Lock Controls */
         .dashboard-selector {
             display: none; 
             background: #e8f4fd;
@@ -91,28 +134,25 @@
         .dashboard-selector.active-dropdown {
             display: block;
         }
-        .dashboard-selector label {
-            font-weight: bold;
-            color: #007bff;
-            font-size: 15px;
-            margin-right: 10px;
-        }
-        .dashboard-selector select {
+        .dashboard-selector button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
             padding: 8px 15px;
-            font-size: 14px;
             border-radius: 5px;
-            border: 1px solid #ccc;
-            outline: none;
-            background: #fff;
             cursor: pointer;
-            width: 250px;
-            max-width: 100%;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .dashboard-selector button:hover {
+            background-color: #c82333;
         }
         
         /* Print Button Style */
         .print-btn-container {
             text-align: right;
             margin-bottom: 10px;
+            display: none;
         }
         .print-btn {
             background-color: #28a745;
@@ -216,7 +256,7 @@
             text-decoration: underline;
         }
 
-        /* Print Media Settings: প্রিন্ট করার সময় যা যা লুকানো থাকবে */
+        /* Print Media Settings */
         @media print {
             body {
                 background-color: #fff;
@@ -239,33 +279,75 @@
         }
     </style>
     <script>
-        function showStatement() {
-            var selectedVal = document.getElementById("statementSelector").value;
+        // কোডের সাথে নির্দিষ্ট সেকশনের আইডি ম্যাপিং
+        const accessCodes = {
+            "100234": "sec-awal",     
+            "100345": "sec-arif",     
+            "100456": "sec-babor",    
+            "100567": "sec-babul",    
+            "100678": "sec-jasim",    
+            "100789": "sec-main",     
+            "100890": "sec-saiem",    
+            "200234": "sec-selim",    
+            "200345": "sec-sanawer",  
+            "200456": "sec-inventory",
+            "200567": "sec-payment"   
+        };
+
+        function verifyPasscode() {
+            var selectedName = document.getElementById("memberNameSelect").value;
+            var code = document.getElementById("passcodeInput").value.trim();
+            var errorMsg = document.getElementById("errorMsg");
+
+            if (accessCodes[code] && selectedName === code) {
+                var targetId = accessCodes[code];
+                
+                document.getElementById("sec-welcome").style.display = "none";
+                
+                var sections = document.getElementsByClassName("section-block");
+                for (var i = 0; i < sections.length; i++) {
+                    sections[i].classList.remove("active");
+                }
+
+                document.getElementById(targetId).classList.add("active");
+                document.getElementById("dashboardSelectorWrapper").classList.add("active-dropdown");
+                document.querySelector(".print-btn-container").style.display = "block";
+                
+                document.getElementById("passcodeInput").value = "";
+                errorMsg.style.display = "none";
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function lockDashboard() {
             var sections = document.getElementsByClassName("section-block");
             for (var i = 0; i < sections.length; i++) {
                 sections[i].classList.remove("active");
             }
-            var target = document.getElementById(selectedVal);
-            if (target) {
-                target.classList.add("active");
-            }
+            document.getElementById("sec-welcome").style.display = "block";
+            document.getElementById("sec-welcome").classList.add("active");
+            document.getElementById("dashboardSelectorWrapper").classList.remove("active-dropdown");
+            document.querySelector(".print-btn-container").style.display = "none";
         }
 
-        function enterDashboard() {
-            document.getElementById("sec-welcome").classList.remove("active");
-            document.getElementById("dashboardSelectorWrapper").classList.add("active-dropdown");
-            document.getElementById("sec-awal").classList.add("active");
-            document.getElementById("statementSelector").value = "sec-awal";
-        }
-
-        // প্রিন্ট ফাংশন সুনিশ্চিত করা হলো
         window.addEventListener('DOMContentLoaded', (event) => {
+            // প্রিন্ট বাটনের কাজ
             const printBtn = document.querySelector('.print-btn');
             if (printBtn) {
                 printBtn.addEventListener('click', function() {
                     window.print();
                 });
             }
+
+            // স্বয়ੰক্রিয়ভাবে আজকের তারিখ (Statement Date) বসানোর কোড
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString('en-GB', options); // যেমন: 18 September 2026
+            
+            const dateElements = document.querySelectorAll('.dynamic-date');
+            dateElements.forEach(function(el) {
+                el.textContent = todayStr;
+            });
         });
     </script>
 </head>
@@ -277,36 +359,56 @@
         <h2>বন্ধুত্বের স্মারক সমিতি</h2>
         <h4>স্থাপিত: ২০২৬</h4>
         <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
+        <h1>🇧🇩 🇦🇺 🇶🇦 🇸🇦 🇦🇪 🇺🇸</h1>
     </header>
 
-    <!-- ১. Welcome Page Section -->
+    <!-- ১. Welcome & Passcode Page Section -->
     <div id="sec-welcome" class="section-block active">
         <div class="welcome-hero">
             <h1>প্রিয় বন্ধুরা,</h1>
             <h1>السلام عليكم ورحمة الله</h1>
             <h1>বন্ধুত্বের স্মারক সমিতিতে</h1>
             <h1>আপনাকে স্বাগতম</h1>
-            <p>আমাদের এই প্ল্যাটফর্মে সকল আর্থিক বিবরণী খুব সহজে দেখতে পারবেন। একসাথে পথচলার স্মারক হিসেবে বাল্যকালের বন্ধুদের নিয়ে গঠিত আমাদের এই সমিতি।</p>
-            <button class="enter-btn" onclick="enterDashboard()">Dashboard</button>
+            <p>সমিতির সকল আর্থিক বিবরণী এখানে পাবেন।</p>
+            <p>সাইবার সিকিউরিটির জন্যে ফাইলগুলো পাসওয়ার্ড দিয়ে সংরক্ষণ করা হয়েছে। আপনার নামের ফাইলের সাথে আপনার পাসওয়ার্ড দিয়ে লগইন করুন।</p>
+            
+            <div class="passcode-box">
+                <div class="form-group">
+                    <label for="memberNameSelect">User Name</label>
+                    <select id="memberNameSelect">
+                        <option value="">আপনার ফাইলটি সিলেক্ট করুন</option>
+                        <option value="100234">আবদুল আউয়াল</option>
+                        <option value="100345">আরিফ হোসেন</option>
+                        <option value="100456">বাবর পাটোয়ারী</option>
+                        <option value="100567">বাবুল হোসেন</option>
+                        <option value="100678">জসিম উদ্দিন</option>
+                        <option value="100789">মঈন উদ্দিন (সুমন)</option>
+                        <option value="100890">মোঃ সায়েম (শাকিল)</option>
+                        <option value="200234">সেলিম পাটোয়ারী</option>
+                        <option value="200345">সানোয়ার কাদের (আরিফ)</option>
+                        <option value="200456">মাসিক লেনদেন এর বিবরণ</option>
+                        <option value="200567">ক্রয়কৃত সম্পত্তি পরিশোধিত বিবরণ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="passcodeInput">Password</label>
+                    <input type="password" id="passcodeInput" placeholder="আপনার ব্যক্তিগত কোড লিখুন" maxlength="6">
+                </div>
+
+                <div class="login-btn-container">
+                    <button class="unlock-btn" onclick="verifyPasscode()">লগইন করুন</button>
+                </div>
+
+                <p id="errorMsg" class="error-msg" style="color: #28a745;">আপনার পাসওয়ার্ড ভুল হয়েছে! অনুগ্রহ করে আবার চেষ্টা করুন।</p>
+            </div>
         </div>
     </div>
 
-    <!-- ২. VLookup Style Selector Dashboard -->
+    <!-- Lock / Logout Dashboard Bar -->
     <div id="dashboardSelectorWrapper" class="dashboard-selector">
-        <label for="statementSelector">হিসেবের বিবরন খুঁজুন:</label>
-        <select id="statementSelector" onchange="showStatement()">
-            <option value="sec-awal">আবদুল আউয়াল</option>
-            <option value="sec-arif">আরিফ হোসেন</option>
-            <option value="sec-babor">বাবর পাটোয়ারী</option>
-            <option value="sec-babul">বাবুল হোসেন</option>
-            <option value="sec-jasim">জসিম উদ্দিন</option>
-            <option value="sec-main">মঈন উদ্দিন (সুমন)</option>
-            <option value="sec-saiem">মোঃ সায়েম (শাকিল)</option>
-            <option value="sec-selim">সেলিম পাটোয়ারী</option>
-            <option value="sec-sanawer">সানোয়ার কাদের (আরিফ)</option>
-            <option value="sec-inventory">মাসিক লেনদেন এর বিবরণ</option>
-            <option value="sec-payment">ক্রয়কৃত সম্পত্তি পরিশোধিত বিবরণ</option>
-        </select>
+        <span style="font-weight: bold; color: #007bff;">সফলভাবে লগইন করা হয়েছে।</span>
+       <p><button onclick="lockDashboard()">Homepage</button></p>
     </div>
 
     <!-- প্রিন্ট বাটন -->
@@ -318,7 +420,7 @@
     <div id="sec-awal" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Abdul Awal</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Abdul Awal - Transaction Details</h3>
         <div class="table-responsive">
@@ -366,7 +468,7 @@
     <div id="sec-arif" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Arif Hossain</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Arif Hossain - Transaction Details</h3>
         <div class="table-responsive">
@@ -410,7 +512,7 @@
     <div id="sec-babor" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Babor Patwary</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Babor Patwary - Transaction Details</h3>
         <div class="table-responsive">
@@ -461,7 +563,7 @@
     <div id="sec-babul" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Babul Hossain</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Babul Hossain - Transaction Details</h3>
         <div class="table-responsive">
@@ -506,7 +608,7 @@
     <div id="sec-jasim" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Jasim Uddin</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Jasim Uddin - Transaction Details</h3>
         <div class="table-responsive">
@@ -552,7 +654,7 @@
     <div id="sec-main" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Main Uddin</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Main Uddin - Transaction Details</h3>
         <div class="table-responsive">
@@ -599,7 +701,7 @@
     <div id="sec-saiem" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Md. Saiem</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Md. Saiem - Transaction Details</h3>
         <div class="table-responsive">
@@ -642,7 +744,7 @@
     <div id="sec-selim" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Selim Patwary</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Selim Patwary - Transaction Details</h3>
         <div class="table-responsive">
@@ -681,7 +783,7 @@
     <div id="sec-sanawer" class="section-block">
         <div class="info-box">
             <p><strong>Shareholder Name:</strong> Sanawer Quder</p>
-            <p><strong>Statement Month:</strong> September 2026</p>
+            <p><strong>Statement Date:</strong> <span class="dynamic-date"></span></p>
         </div>
         <h3 class="section-title">Sanawer Quder - Transaction Details</h3>
         <div class="table-responsive">
