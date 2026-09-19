@@ -63,6 +63,44 @@
             margin-bottom: 30px;
         }
 
+        /* Glassmorphism Running Marquee Style */
+        .glass-marquee-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto 30px auto;
+            overflow: hidden;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            padding: 14px 0;
+        }
+
+        .glass-marquee-track {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marqueeRun 18s linear infinite;
+            font-size: 17px;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .glass-marquee-container:hover .glass-marquee-track {
+            animation-play-state: paused; /* মাউস নিলে অ্যানিমেশন থেমে যাবে */
+        }
+
+        @keyframes marqueeRun {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
         /* Live DateTime & Location Box Style */
         .live-datetime-box, .location-box {
             background: #e8f4fd;
@@ -344,10 +382,8 @@
             document.querySelector(".print-btn-container").style.display = "none";
         }
 
-        // গ্লোবাল টাইম জোন ভেরিয়েবল (ডিফল্ট ব্রাউজারের টাইম জোন)
         let detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        // লাইভ ডেট ও টাইম আপডেট করার ফাংশন (টাইম জোনসহ)
         function updateLiveClock() {
             const now = new Date();
             const options = { 
@@ -359,7 +395,7 @@
                 minute: '2-digit', 
                 second: '2-digit',
                 hour12: true,
-                timeZone: detectedTimeZone // সঠিক দেশের টাইম জোন ব্যবহার করা হবে
+                timeZone: detectedTimeZone
             };
             const timeString = now.toLocaleDateString('en-GB', options);
             const clockElement = document.getElementById('liveClock');
@@ -368,7 +404,6 @@
             }
         }
 
-        // ব্যবহারকারীর দেশ এবং সঠিক টাইম জোন শনাক্ত করার ফাংশন
         function fetchUserLocation() {
             fetch('https://ipapi.co/json/')
                 .then(response => response.json())
@@ -377,7 +412,6 @@
                     if (locationElement && data.country_name) {
                         locationElement.textContent = `🌍 ${data.country_name} (${data.city || ''})`;
                     }
-                    // আইপি থেকে প্রাপ্ত টাইম জোন সেট করা
                     if (data.timezone) {
                         detectedTimeZone = data.timezone;
                     }
@@ -441,7 +475,14 @@
             </div>
              
             <p>সমিতির সকল আর্থিক বিবরণী এখানে পাবেন।</p>
-            <p style="color: #28a745;">বর্তমানে জমা আছে: ১,৬২,০০০.০০ টাকা মাত্র</p>
+            
+            <!-- গ্লাস মোড রানিং টেক্সট অ্যানিমেশন -->
+            <div class="glass-marquee-container">
+                <div class="glass-marquee-track">
+                    🌟 বর্তমানে জমা আছে: ১,৬২,০০০.০০ টাকা মাত্র 🌟
+                </div>
+            </div>
+
             <p>সাইবার সিকিউরিটির জন্যে ফাইলগুলো পাসওয়ার্ড দিয়ে সংরক্ষণ করা হয়েছে। আপনার নামের ফাইলের সাথে আপনার পাসওয়ার্ড দিয়ে লগইন করুন।</p>
             
             <div class="passcode-box">
