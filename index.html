@@ -63,8 +63,8 @@
             margin-bottom: 30px;
         }
 
-        /* Live DateTime Box Style */
-        .live-datetime-box {
+        /* Live DateTime & Location Box Style */
+        .live-datetime-box, .location-box {
             background: #e8f4fd;
             padding: 12px;
             border-radius: 8px;
@@ -293,7 +293,6 @@
         }
     </style>
     <script>
-        // কোডের সাথে নির্দিষ্ট সেকশনের আইডি ম্যাপিং
         const accessCodes = {
             "100234": "sec-awal",     
             "100345": "sec-arif",     
@@ -349,7 +348,7 @@
         function updateLiveClock() {
             const now = new Date();
             const options = { 
-                weekday: 'long', 
+                weekday: 'short', 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric', 
@@ -365,12 +364,30 @@
             }
         }
 
+        // ব্যবহারকারীর দেশ শনাক্ত করার ফাংশন
+        function fetchUserLocation() {
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const locationElement = document.getElementById('userLocation');
+                    if (locationElement && data.country_name) {
+                        locationElement.textContent = `🌍 ${data.country_name} (${data.city || ''})`;
+                    }
+                })
+                .catch(error => {
+                    const locationElement = document.getElementById('userLocation');
+                    if (locationElement) {
+                        locationElement.textContent = "🌍 দেশ শনাক্ত করা যায়নি";
+                    }
+                });
+        }
+
         window.addEventListener('DOMContentLoaded', (event) => {
-            // লাইভ ঘড়ি চালু করা (প্রতি ১ সেকেন্ড পর পর)
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
 
-            // প্রিন্ট বাটনের কাজ
+            fetchUserLocation();
+
             const printBtn = document.querySelector('.print-btn');
             if (printBtn) {
                 printBtn.addEventListener('click', function() {
@@ -378,7 +395,6 @@
                 });
             }
 
-            // স্বয়ংক্রিয়ভাবে স্টেটমেন্টের তারিখ বসানোর কোড
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const todayStr = new Date().toLocaleDateString('en-GB', options); 
             
@@ -397,7 +413,15 @@
         <h2>বন্ধুত্বের স্মারক সমিতি</h2>
         <h4>স্থাপিত: ২০২৬</h4>
         <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
-        <h1>🇧🇩 🇦🇺 🇶🇦 🇸🇦 🇦🇪 🇺🇸</h1>
+        <!-- লাইভ লোকেশন বক্স -->
+        <div class="location-box" id="userLocation">
+          🌍 আপনার দেশ শনাক্ত করা হচ্ছে...
+            </div>
+                        <!-- লাইভ ডেট ও টাইম বক্স -->
+            <div class="live-datetime-box">
+                ⏰ <span id="liveClock">লোড হচ্ছে...</span>
+            </div>
+            
     </header>
 
     <!-- ১. Welcome & Passcode Page Section -->
@@ -407,12 +431,7 @@
             <h1>السلام عليكم ورحمة الله</h1>
             <h1>বন্ধুত্বের স্মারক সমিতিতে</h1>
             <h1>আপনাকে স্বাগতম</h1>
-            
-            <!-- লাইভ ডেট ও টাইম বক্স -->
-            <div class="live-datetime-box">
-                ⏰ <span id="liveClock">লোড হচ্ছে...</span>
-            </div>
-
+          
             <p>সমিতির সকল আর্থিক বিবরণী এখানে পাবেন।</p>
             <p>সাইবার সিকিউরিটির জন্যে ফাইলগুলো পাসওয়ার্ড দিয়ে সংরক্ষণ করা হয়েছে। আপনার নামের ফাইলের সাথে আপনার পাসওয়ার্ড দিয়ে লগইন করুন।</p>
             
