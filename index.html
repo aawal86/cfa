@@ -46,7 +46,6 @@
             color: #666;
         }
         
-        /* Welcome Page Styles */
         #sec-welcome {
             text-align: center;
             padding: 40px 20px;
@@ -63,7 +62,6 @@
             margin-bottom: 30px;
         }
 
-        /* Glassmorphism Running Marquee Style */
         .glass-marquee-container {
             position: relative;
             width: 100%;
@@ -89,19 +87,14 @@
         }
 
         .glass-marquee-container:hover .glass-marquee-track {
-            animation-play-state: paused; /* মাউস নিলে অ্যানিমেশন থেমে যাবে */
+            animation-play-state: paused;
         }
 
         @keyframes marqueeRun {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
-        /* Live DateTime & Location Box Style */
         .live-datetime-box, .location-box {
             background: #e8f4fd;
             padding: 12px;
@@ -115,7 +108,6 @@
             text-align: center;
         }
         
-        /* Passcode Box Style */
         .passcode-box {
             background: #e8f4fd;
             padding: 25px;
@@ -173,7 +165,6 @@
             display: none;
         }
 
-        /* Dashboard Lock Controls */
         .dashboard-selector {
             display: none; 
             background: #e8f4fd;
@@ -200,7 +191,6 @@
             background-color: #c82333;
         }
         
-        /* Print Button Style */
         .print-btn-container {
             text-align: right;
             margin-bottom: 10px;
@@ -253,7 +243,6 @@
         .table-responsive {
             width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
             margin-bottom: 15px;
         }
         table {
@@ -308,26 +297,11 @@
             text-decoration: underline;
         }
 
-        /* Print Media Settings */
         @media print {
-            body {
-                background-color: #fff;
-                padding: 0;
-            }
-            .container {
-                box-shadow: none;
-                padding: 0;
-                max-width: 100%;
-            }
-            #dashboardSelectorWrapper,
-            .print-btn-container,
-            footer {
-                display: none !important;
-            }
-            .section-block {
-                border: none;
-                padding: 0;
-            }
+            body { background-color: #fff; padding: 0; }
+            .container { box-shadow: none; padding: 0; max-width: 100%; }
+            #dashboardSelectorWrapper, .print-btn-container, footer { display: none !important; }
+            .section-block { border: none; padding: 0; }
         }
     </style>
     <script>
@@ -346,17 +320,16 @@
         };
 
         function verifyPasscode() {
-            var selectedName = document.getElementById("memberNameSelect").value;
-            var code = document.getElementById("passcodeInput").value.trim();
-            var errorMsg = document.getElementById("errorMsg");
+            const selectedName = document.getElementById("memberNameSelect").value;
+            const code = document.getElementById("passcodeInput").value.trim();
+            const errorMsg = document.getElementById("errorMsg");
 
             if (accessCodes[code] && selectedName === code) {
-                var targetId = accessCodes[code];
-                
+                const targetId = accessCodes[code];
                 document.getElementById("sec-welcome").style.display = "none";
                 
-                var sections = document.getElementsByClassName("section-block");
-                for (var i = 0; i < sections.length; i++) {
+                const sections = document.getElementsByClassName("section-block");
+                for (let i = 0; i < sections.length; i++) {
                     sections[i].classList.remove("active");
                 }
 
@@ -372,12 +345,13 @@
         }
 
         function lockDashboard() {
-            var sections = document.getElementsByClassName("section-block");
-            for (var i = 0; i < sections.length; i++) {
+            const sections = document.getElementsByClassName("section-block");
+            for (let i = 0; i < sections.length; i++) {
                 sections[i].classList.remove("active");
             }
-            document.getElementById("sec-welcome").style.display = "block";
-            document.getElementById("sec-welcome").classList.add("active");
+            const welcomeSec = document.getElementById("sec-welcome");
+            welcomeSec.style.display = "block";
+            welcomeSec.classList.add("active");
             document.getElementById("dashboardSelectorWrapper").classList.remove("active-dropdown");
             document.querySelector(".print-btn-container").style.display = "none";
         }
@@ -387,20 +361,13 @@
         function updateLiveClock() {
             const now = new Date();
             const options = { 
-                weekday: 'short', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: true,
+                weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
                 timeZone: detectedTimeZone
             };
-            const timeString = now.toLocaleDateString('en-GB', options);
             const clockElement = document.getElementById('liveClock');
             if (clockElement) {
-                clockElement.textContent = timeString;
+                clockElement.textContent = now.toLocaleDateString('en-GB', options);
             }
         }
 
@@ -416,7 +383,7 @@
                         detectedTimeZone = data.timezone;
                     }
                 })
-                .catch(error => {
+                .catch(() => {
                     const locationElement = document.getElementById('userLocation');
                     if (locationElement) {
                         locationElement.textContent = "🌍 দেশ শনাক্ত করা যায়নি";
@@ -424,26 +391,18 @@
                 });
         }
 
-        window.addEventListener('DOMContentLoaded', (event) => {
+        window.addEventListener('DOMContentLoaded', () => {
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
-
             fetchUserLocation();
 
             const printBtn = document.querySelector('.print-btn');
             if (printBtn) {
-                printBtn.addEventListener('click', function() {
-                    window.print();
-                });
+                printBtn.addEventListener('click', () => window.print());
             }
 
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const todayStr = new Date().toLocaleDateString('en-GB', options); 
-            
-            const dateElements = document.querySelectorAll('.dynamic-date');
-            dateElements.forEach(function(el) {
-                el.textContent = todayStr;
-            });
+            const todayStr = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }); 
+            document.querySelectorAll('.dynamic-date').forEach(el => el.textContent = todayStr);
         });
     </script>
 </head>
@@ -457,26 +416,23 @@
         <p>কৈশোর থেকে একসাথে বড় হচ্ছি</p>
     </header>
 
-    <!-- ১. Welcome & Passcode Page Section -->
+    <!-- Welcome & Passcode Section -->
     <div id="sec-welcome" class="section-block active">
         <div class="welcome-hero">
             <h1>السلام عليكم ورحمة الله</h1>
             <h1>বন্ধুত্বের স্মারক সমিতিতে</h1>
             <h1>আপনাকে স্বাগতম</h1>
             
-            <!-- লাইভ লোকেশন বক্স -->
             <div class="location-box" id="userLocation">
               🌍 আপনার দেশ শনাক্ত করা হচ্ছে...
             </div>
             
-            <!-- লাইভ ডেট ও টাইম বক্স -->
             <div class="live-datetime-box">
                 ⏰ <span id="liveClock">লোড হচ্ছে...</span>
             </div>
              
             <p>সমিতির সকল আর্থিক বিবরণী এখানে পাবেন।</p>
             
-            <!-- গ্লাস মোড রানিং টেক্সট অ্যানিমেশন -->
             <div class="glass-marquee-container">
                 <div class="glass-marquee-track">
                     🌟 বর্তমানে জমা আছে: ১,৬২,০০০.০০ টাকা মাত্র 🌟
@@ -521,7 +477,7 @@
     <!-- Lock / Logout Dashboard Bar -->
     <div id="dashboardSelectorWrapper" class="dashboard-selector">
         <span style="font-weight: bold; color: #007bff;">সফলভাবে লগইন করা হয়েছে।</span>
-       <p><button onclick="lockDashboard()">Homepage</button></p>
+        <p><button onclick="lockDashboard()">Homepage</button></p>
     </div>
 
     <!-- প্রিন্ট বাটন -->
@@ -1099,8 +1055,7 @@
                     <tr><td>30-08-2026</td><td>28457101</td><td>Babor Patwary</td><td>MTB Plc</td><td>290310020855</td><td>3,30,000.00</td></tr>
                     <tr><td>31-08-2026</td><td>28477219</td><td>Salim Patwary</td><td>MTB Plc</td><td>290310020855</td><td>90,000.00</td></tr>
                     <tr><td>31-08-2026</td><td>13911499</td><td>For Arif Bhai</td><td>NRBC Plc</td><td>5058********2932</td><td>1,00,000.00</td></tr>
-                    <tr><td>31-08-2026</td><td>28494840</td>
-                    <td>Babor Patwary</td><td>MTB Plc</td><td>290310020855</td><td>1,70,000.00</td></tr>
+                    <tr><td>31-08-2026</td><td>28494840</td><td>Babor Patwary</td><td>MTB Plc</td><td>290310020855</td><td>1,70,000.00</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1113,9 +1068,9 @@
 
     <footer>
         <p>Our Social Community: <a href="https://chat.whatsapp.com/CBhe3TSeaoj4UwImXaDo3J?s=cl&p=a&mlu=0&ilr=4" target="_blank">WhatsApp</a> or <a href="https://m.me/j/AbYCDokDuB-IvIW_/?send_source=gc%3Acopy_invite_link_c" target="_blank">Messenger</a></p>
-         <p>Copyright @ 2026. All Right Reserve</p>
-         <p>It's a friends collaboration financial organization</p>
-         <p style="color: #28a745;">Portal Developed by: Abdul Awal</p>
+        <p>Copyright @ 2026. All Right Reserve</p>
+        <p>It's a friends collaboration financial organization</p>
+        <p style="color: #28a745;">Portal Developed by: Abdul Awal</p>
     </footer>
 </div>
 
